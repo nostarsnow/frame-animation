@@ -15,7 +15,7 @@ const vueConfig = {
     process.env.NODE_ENV === 'production'
       ? '/'
       : '/',
-  outputDir: 'dist/',
+  outputDir: 'docs/',
   devServer: {
     port: 8008,
     disableHostCheck: true,
