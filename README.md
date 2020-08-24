@@ -22,7 +22,7 @@
 
 逐帧动画（Frame By Frame）是一种常见的动画形式，其原理是在“连续的关键帧”中分解动画动作，也就是在时间轴的每帧上逐帧绘制不同的内容，使其连续播放而成动画。
 
-![翻书动画](https://iknow-pic.cdn.bcebos.com/8694a4c27d1ed21bc1171f4bad6eddc450da3f45)
+![翻书动画](https://static.zuhaowan.com/static/zhwfe/static/nostar/frame-animation/img/fanshu.gif)
 
 ### 什么是帧
 
