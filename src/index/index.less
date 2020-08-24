@@ -1,0 +1,96 @@
+body {
+  background: #f5f5f5;
+  font-family: microsoft yahei;
+}
+
+.app {
+  h1 {
+    text-align: center;
+    color: rgb(230, 52, 83);
+  }
+}
+
+.form {
+  width: 550px;
+  margin: 0 auto;
+
+  .el-form-item__label {
+    font-weight: bold;
+  }
+  .min,
+  .max {
+    margin: 0 3px;
+    cursor: pointer;
+  }
+  .upload-box {
+    position: relative;
+
+    input {
+      opacity: 0;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      cursor: pointer;
+    }
+
+    .text {
+      position: relative;
+    }
+  }
+
+  .tip {
+    margin-left: 5px;
+    color: #999;
+  }
+  .el-form-item {
+    margin-bottom: 10px;
+  }
+}
+.result {
+  width: 880px;
+  margin: 20px auto 40px;
+  .img {
+    display: flex;
+    position: relative;
+    padding: 10px 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    .l {
+      width: 400px;
+      height: 100%;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      left: 0;
+      top: 0;
+      border: #ddd 1px solid;
+      img {
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+        display: block;
+        object-fit: contain;
+      }
+    }
+    .r {
+      margin-left: 450px;
+      flex: 1;
+      color: #777;
+    }
+  }
+}
+.save-box {
+  a {
+    margin: 0 10px;
+  }
+}
+.iframe{
+  margin-top: 60px;
+  margin-bottom: 40px;
+  iframe{
+    border:none;
+  }
+}
