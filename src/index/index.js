@@ -1,5 +1,6 @@
 import CodeView from "../code/CodeView.vue";
 import getGifFrames from "../getGifFrames";
+import render from "./render";
 export default {
   name: "ns-frame-animation",
   data() {
@@ -9,6 +10,8 @@ export default {
       renderType: "css",
       frame: 25,
       loop: true,
+      unit: "px",
+      rem2px: "100",
     };
     return {
       form,
@@ -49,9 +52,14 @@ export default {
       this.$notify.success("生成成功！");
       this.loading = false;
       this.$nextTick(() => {
+        let fontSize =
+          this.result.unit === "rem" ? `${this.result.rem2px}px` : "14px";
+        this.$refs.iframe.contentWindow.document.querySelector(
+          "head"
+        ).innerHTML = "";
         this.$refs.iframe.contentWindow.document.body.innerHTML = "";
         this.$refs.iframe.contentWindow.document.write(
-          `<style>*{padding:0;margin:0;}</style>` +
+          `<style>*{padding:0;margin:0;}html{font-size:${fontSize}}</style>` +
             this.result.html.replace(
               `./${this.result.filename}`,
               this.result.image
@@ -144,8 +152,8 @@ export default {
       const uploadGif = this.$refs.uploadGif;
       const uploadPng = this.$refs.uploadPng;
       uploadGif.addEventListener("change", async function(e) {
-        if ( !/\.gif$/i.test(this.value) ){
-          $vm.$msg.error('请上传正确的gif图片！');
+        if (!/\.gif$/i.test(this.value)) {
+          $vm.$msg.error("请上传正确的gif图片！");
           return;
         }
         $vm.gifValue = this.value;
@@ -180,6 +188,9 @@ export default {
       } else {
         this.colDisabled = false;
       }
+      if (renderType === "canvas") {
+        this.form.unit = "px";
+      }
       this.isShowModal = false;
     },
     min() {
@@ -190,7 +201,7 @@ export default {
     },
     generate(files) {
       let { form, cols, rows, duration } = this;
-      let { col, frame, loop, renderType } = form;
+      let { col, frame, loop, renderType, unit, rem2px } = form;
       let { width, height } = files[0];
       let canvas = document.createElement("canvas");
       let fullWidth = width * cols;
@@ -211,149 +222,58 @@ export default {
       });
       let image = canvas.toDataURL();
       let name = `ns-frame-${String(+new Date()).substr(6)}`;
+      let rect = {
+        px: {
+          fullWidth,
+          fullHeight,
+          width,
+          height,
+          unit,
+        },
+        rem: {
+          fullWidth: (fullWidth / rem2px).toFixed(4),
+          fullHeight: (fullHeight / rem2px).toFixed(4),
+          width: (width / rem2px).toFixed(4),
+          height: (height / rem2px).toFixed(4),
+          unit,
+        },
+      };
       let result = {
         image,
         name,
         filename: `${name}.png`,
         fileSize: (window.atob(image.split(",")[1]).length / 1024).toFixed(2),
-        fullWidth,
-        fullHeight,
+        rect,
+        unit,
+        rem2px,
         rows,
         cols,
         files,
         frame: frame,
         loop: loop,
         renderType,
-        width,
-        height,
         duration,
       };
-      result.html = this.generateHtml(result);
+      result.html = render(result.renderType, result);
       this.result = result;
-    },
-    generateHtml(result) {
-      if (result.renderType === "css") {
-        return `<style>
-  .${result.name}{
-    width: ${result.width}px;
-    height: ${result.height}px;
-    background: url(./${result.filename}) no-repeat 0 0;
-    background-size: ${result.fullWidth}px ${result.fullHeight}px;
-    animation: key-${result.name} ${result.duration}ms ${
-          result.loop ? "infinite " : ""
-        }steps(${result.files.length});
-  }
-  @keyframes key-${result.name} {
-    0%{
-      background-position: 0 0;
-    }
-    100%{
-      background-position: ${
-        result.rows === 1
-          ? "-" + result.fullWidth + "px 0"
-          : "0 -" + result.fullHeight + "px"
-      };
-    }
-  }
-</style>
-<div class="${result.name}"></div>`;
-      }
-      if (result.renderType === "js") {
-        return `<div class="${result.name}" data-src="./${result.filename}"></div>
-<script>
-  function nsFrameAnimationByJs(options){
-    var $box = options.box;
-    var src = $box.getAttribute('data-src');
-    var img = new Image();
-    img.src = src;
-    var width = options.width;
-    var height = options.height;
-    img.onload = function(){
-      $box.style.backgroundImage = 'url(' + src + ')';
-      $box.style.width = width + 'px';
-      $box.style.height = height + 'px';
-      frameAnim(0);
-    }
-    function frameAnim(index){
-      var position = (-width * ~~(index%options.cols)) + 'px ' + (-height * ~~(index/options.cols)) + 'px';
-      $box.style.backgroundPosition = position;
-      if ( ++index < options.framesLength ){
-        setTimeout(function(){
-          frameAnim(index)
-        }, 1000/options.framesOnSecond)
-      }else{
-        if ( options.loop ){
-          setTimeout(function(){
-            frameAnim(0)
-          }, 1000/options.framesOnSecond)
-        }
-      }
-    }
-  }
-  nsFrameAnimationByJs({
-    box: document.querySelector('.${result.name}'),
-    width: ${result.width},
-    height: ${result.height},
-    cols: ${result.cols},
-    framesLength: ${result.files.length},
-    framesOnSecond: ${result.frame},
-    loop: ${result.loop}
-  })
-</script>`;
-      }
-      if (result.renderType === "canvas") {
-        return `<div class="${result.name}" data-src="./${result.filename}"></div>
-<script>
-  function nsFrameAnimationByCanvas(options){
-    var $box = options.box;
-    var src = $box.getAttribute('data-src');
-    var img = new Image();
-    img.src = src;
-    var width = options.width;
-    var height = options.height;
-    var canvas = document.createElement('canvas');
-    var ctx = canvas.getContext('2d');
-    img.onload = function(){
-      $box.style.width = width + 'px';
-      $box.style.height = height + 'px';
-      canvas.width = width;
-      canvas.height = height;
-      $box.appendChild(canvas);
-      frameAnim(0);
-    }
-    function frameAnim(index){
-      ctx.clearRect(0, 0, width, height);
-      ctx.drawImage(img,width * ~~(index%options.cols),height * ~~(index/options.cols),
-      width, height, 0, 0, width, height);
-      if ( ++index < options.framesLength ){
-        setTimeout(function(){
-          frameAnim(index)
-        }, 1000/options.framesOnSecond)
-      }else{
-        if ( options.loop ){
-          setTimeout(function(){
-            frameAnim(0)
-          }, 1000/options.framesOnSecond)
-        }
-      }
-    }
-  }
-  nsFrameAnimationByCanvas({
-    box: document.querySelector('.${result.name}'),
-    width: ${result.width},
-    height: ${result.height},
-    cols: ${result.cols},
-    framesLength: ${result.files.length},
-    framesOnSecond: ${result.frame},
-    loop: ${result.loop}
-  })
-</script>`;
-      }
     },
     onSave() {
       let { filename, image } = this.result;
       this.$download(image, filename);
       this.$notify.success("保存成功！");
+    },
+    rem2pxChange() {
+      let rem2px = this.form.rem2px;
+      rem2px = rem2px.replace(/\D/g, "");
+      if (rem2px) {
+        if (+rem2px < 1) {
+          this.form.rem2px = 1;
+        } else {
+          this.form.rem2px = rem2px;
+        }
+      } else {
+        this.form.rem2px = 1;
+      }
     },
   },
   computed: {

@@ -81,6 +81,18 @@
           <el-radio label="canvas">canvas</el-radio>
         </el-radio-group>
       </el-form-item>
+      <el-form-item label="渲染单位：">
+        <el-radio-group v-model="form.unit">
+          <el-radio label="px">px</el-radio>
+          <el-radio label="rem" :disabled="form.renderType == 'canvas'">rem</el-radio>
+        </el-radio-group>
+        <span class="rem-box" v-if="form.unit === 'rem'">
+          <el-input v-model="form.rem2px" size="mini" @change="rem2pxChange">
+            <template slot="prepend">1rem =</template>
+            <template slot="append">px</template>
+          </el-input>
+        </span>
+      </el-form-item>
       <el-form-item label="循环播放：">
         <div>
           <el-switch
@@ -125,14 +137,14 @@
         <div class="r">
           <p>图片名称：{{ result.filename }}</p>
           <p>图片大小：约{{ result.fileSize }}KB</p>
-          <p>图片尺寸：{{ result.fullWidth }}px × {{ result.fullHeight }}px</p>
+          <p>图片尺寸：{{ result.rect[result.unit].fullWidth }}{{ result.unit }} × {{ result.rect[result.unit].fullHeight }}{{ result.unit }}</p>
           <p>
             图片行列：{{ result.rows }}行{{ result.cols }}列，共{{
               result.files.length
             }}帧
           </p>
           <p>每秒帧数：{{ result.frame }}</p>
-          <p>每帧尺寸：{{ result.width }}px × {{ result.height }}px</p>
+          <p>每帧尺寸：{{ result.rect[result.unit].width }}{{ result.unit }} × {{ result.rect[result.unit].height }}{{ result.unit }}</p>
           <p>动画时长：{{ result.duration }}毫秒</p>
           <p>是否循环：{{ result.loop ? "循环播放" : "播放一次" }}</p>
           <div class="save-box">
@@ -152,7 +164,7 @@
       <CodeView :code="result.html" />
       <div class="iframe">
         <h3>预览：</h3>
-        <iframe ref="iframe" src="about:blank" :width="result.width + 'px'" :height="result.height + 'px'"></iframe>
+        <iframe ref="iframe" src="about:blank" :width="result.rect.px.width + 'px'" :height="result.rect.px.height + 'px'"></iframe>
       </div>
     </div>
     <FrameModal
