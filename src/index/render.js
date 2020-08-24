@@ -48,8 +48,9 @@ const render = {
       frameAnim(0);
     }
     function frameAnim(index){
-      var position = (-width * ~~(index%options.cols)) + options.unit + ' ' + (-height * ~~(index/options.cols)) + options.unit;
-      $box.style.backgroundPosition = position;
+      var left = (-width * ~~(index%options.cols)) + options.unit;
+      var top = (-height * ~~(index/options.cols)) + options.unit;
+      $box.style.backgroundPosition = left + ' ' + top;
       if ( ++index < options.framesLength ){
         setTimeout(function(){
           frameAnim(index)
