@@ -13,7 +13,7 @@ const vueConfig = {
   productionSourceMap: false,
   publicPath:
     process.env.NODE_ENV === 'production'
-      ? 'https://static.zuhaowan.com/static/zhwfe/static/nostar/frame-animation/'
+      ? '/'
       : '/',
   outputDir: 'dist/',
   devServer: {
