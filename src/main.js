@@ -16,7 +16,7 @@ import {
 import VueClipboard from 'vue-clipboard2'
 Vue.use(VueClipboard)
 
-import VueHighlightJS from 'vue-highlightjs'
+import VueHighlightJS from './code/highlight'
 import "highlight.js/styles/vs2015.css"
 Vue.use(VueHighlightJS)
 

@@ -144,6 +144,10 @@ export default {
       const uploadGif = this.$refs.uploadGif;
       const uploadPng = this.$refs.uploadPng;
       uploadGif.addEventListener("change", async function(e) {
+        if ( !/\.gif$/i.test(this.value) ){
+          $vm.$msg.error('请上传正确的gif图片！');
+          return;
+        }
         $vm.gifValue = this.value;
         let file = e.target.files[0];
         let data = await $vm.formatGif(file);
@@ -182,8 +186,7 @@ export default {
       this.form.col = 1;
     },
     max() {
-      this.form.col =
-        this.form.files.length > 0 ? this.form.files.length : this.maxCol;
+      this.form.col = this.form.files.length;
     },
     generate(files) {
       let { form, cols, rows, duration } = this;
@@ -212,7 +215,7 @@ export default {
         image,
         name,
         filename: `${name}.png`,
-        fullSize: (window.atob(image.split(",")[1]).length / 1024).toFixed(2),
+        fileSize: (window.atob(image.split(",")[1]).length / 1024).toFixed(2),
         fullWidth,
         fullHeight,
         rows,

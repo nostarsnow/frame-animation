@@ -1,6 +1,7 @@
 <template>
   <div class="index">
     <h1>ns frame by frame animation - 逐帧动画生成器</h1>
+    <h2>推荐使用chrome及同内核浏览器访问 <iframe src="https://ghbtns.com/github-btn.html?user=nostarsnow&repo=frame-animation&type=star&count=true&size=large&v=2" frameborder="0" scrolling="0" width="160px" height="30px"></iframe></h2>
     <el-form ref="form" :model="form" label-width="200px" class="form">
       <el-form-item label="请选择图片类型：">
         <el-radio-group v-model="sourceType" @change="typeChange">
@@ -22,6 +23,9 @@
               </span>
               <span v-else>请选择包含所有帧图片的文件夹。</span>
             </span>
+          </div>
+          <div class="text">
+            <span class="tip">自动排序方式为png图片名称过滤非数字字符后正序</span>
           </div>
         </div>
       </el-form-item>
@@ -99,7 +103,7 @@
           >
         </div>
       </el-form-item>
-      <el-form-item>
+      <el-form-item class="el-form-btn">
         <el-button
           :type="loading ? 'info' : 'primary'"
           @click="onSubmit"
@@ -120,7 +124,7 @@
         </div>
         <div class="r">
           <p>图片名称：{{ result.filename }}</p>
-          <p>图片大小：约{{ result.fullSize }}KB</p>
+          <p>图片大小：约{{ result.fileSize }}KB</p>
           <p>图片尺寸：{{ result.fullWidth }}px × {{ result.fullHeight }}px</p>
           <p>
             图片行列：{{ result.rows }}行{{ result.cols }}列，共{{

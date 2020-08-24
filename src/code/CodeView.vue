@@ -1,7 +1,6 @@
 <template>
   <div class="code-view">
     <pre v-highlightjs="formatCode"><code class="html"></code></pre>
-
     <div class="icons">
       <el-tooltip :content="copyed ? '复制成功！' : '复制代码'">
         <i
